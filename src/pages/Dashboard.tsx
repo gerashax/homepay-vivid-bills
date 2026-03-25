@@ -36,7 +36,9 @@ export default function Dashboard() {
     <div className="min-h-screen pb-24 px-4 pt-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-display font-bold text-foreground">HomePay</h1>
+        <h1 className="text-2xl font-display font-bold text-foreground">
+          Hola, {userName ?? 'Usuario'} 👋
+        </h1>
         <p className="text-muted-foreground text-sm mt-1">Gestor de pagos del hogar</p>
       </div>
 
