@@ -33,6 +33,7 @@ export interface AppState {
   services: Service[];
   members: string[];
   reminders: ReminderConfig;
+  userName: string | null;
 }
 
 interface AppContextType extends AppState {
