@@ -5,7 +5,7 @@ import { useApp, SERVICE_CONFIG, getServiceStatus, getDaysUntilDue } from '@/con
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { services } = useApp();
+  const { services, userName } = useApp();
 
   const totalSpent = services.reduce((sum, s) => {
     const thisMonth = s.payments.filter(p => {
