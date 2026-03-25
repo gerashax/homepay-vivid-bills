@@ -181,14 +181,14 @@ export const SERVICE_CONFIG: Record<ServiceType, { label: string; icon: string; 
   phone: { label: 'Teléfono', icon: '📱', colorClass: 'text-service-phone', hex: '#9C27B0' },
 };
 
-export function getServiceStatus(service: Service): 'paid' | 'upcoming' | 'overdue' {
+export function getServiceStatus(service: Service): 'paid' | 'upcoming' | 'overdue' | 'pending' {
   if (service.paid) return 'paid';
   const now = new Date();
   const due = new Date(service.dueDate);
   const diffDays = Math.ceil((due.getTime() - now.getTime()) / 86400000);
   if (diffDays < 0) return 'overdue';
   if (diffDays <= 5) return 'upcoming';
-  return 'paid'; // not yet near due, show as ok — actually let's show a neutral state
+  return 'pending';
 }
 
 export function getDaysUntilDue(dueDate: string): number {
