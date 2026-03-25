@@ -1,25 +1,33 @@
 import { useEffect } from 'react';
 import { useApp, getServiceStatus, SERVICE_CONFIG } from '@/context/AppContext';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { Capacitor } from '@capacitor/core';
 
 const LAST_NOTIF_KEY = 'homepay-last-notification';
 
-// iOS no soporta Notification API del navegador
-const isNotificationSupported = () => typeof window !== 'undefined' && 'Notification' in window;
+const isNative = () => Capacitor.isNativePlatform();
+const isWebNotificationSupported = () => typeof window !== 'undefined' && 'Notification' in window;
 
 export function useNotifications() {
   const { reminders, services } = useApp();
 
   const requestPermission = async (): Promise<boolean> => {
-    if (!isNotificationSupported()) return false;
+    if (isNative()) {
+      const result = await PushNotifications.requestPermissions();
+      if (result.receive === 'granted') {
+        await PushNotifications.register();
+        return true;
+      }
+      return false;
+    }
+    if (!isWebNotificationSupported()) return false;
     if (Notification.permission === 'granted') return true;
     const result = await Notification.requestPermission();
     return result === 'granted';
   };
 
   const fireNotifications = () => {
-    if (!isNotificationSupported()) return;
     if (!reminders.enabled) return;
-    if (Notification.permission !== 'granted') return;
 
     const pending = services.filter(s => {
       const enabled = reminders.serviceToggles[s.id] !== false;
@@ -29,16 +37,15 @@ export function useNotifications() {
 
     if (pending.length === 0) return;
 
-    const titles = pending.map(s => {
+    const body = pending.map(s => {
       const cfg = SERVICE_CONFIG[s.type];
       const status = getServiceStatus(s);
       return `${cfg.icon} ${cfg.label} — ${status === 'overdue' ? '¡Vencido!' : 'Por vencer'}`;
-    });
+    }).join('\n');
 
-    new Notification('💰 HomePay — Recordatorio de pagos', {
-      body: titles.join('\n'),
-      icon: '/favicon.ico',
-    });
+    if (!isNative() && isWebNotificationSupported() && Notification.permission === 'granted') {
+      new Notification('💰 HomePay — Recordatorio de pagos', { body, icon: '/favicon.ico' });
+    }
 
     localStorage.setItem(LAST_NOTIF_KEY, new Date().toISOString());
   };
@@ -56,21 +63,19 @@ export function useNotifications() {
 
   useEffect(() => {
     if (!reminders.enabled) return;
-    if (!isNotificationSupported()) return;
+    if (isNative()) return;
+    if (!isWebNotificationSupported()) return;
 
-    const scheduleForToday = () => {
-      const now = new Date();
-      const target = new Date();
-      target.setHours(reminders.hour, 0, 0, 0);
-      let delay = target.getTime() - now.getTime();
-      if (delay < 0) delay += 86400000;
-      const timer = setTimeout(() => {
-        if (shouldNotify()) fireNotifications();
-      }, delay);
-      return timer;
-    };
+    const now = new Date();
+    const target = new Date();
+    target.setHours(reminders.hour, 0, 0, 0);
+    let delay = target.getTime() - now.getTime();
+    if (delay < 0) delay += 86400000;
 
-    const timer = scheduleForToday();
+    const timer = setTimeout(() => {
+      if (shouldNotify()) fireNotifications();
+    }, delay);
+
     return () => clearTimeout(timer);
   }, [reminders, services]);
 
