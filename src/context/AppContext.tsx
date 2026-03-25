@@ -138,6 +138,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const clearAllServices = () => {
+    setState(s => ({ ...s, services: [] }));
+  };
+
   const getAllPayments = (): Payment[] => {
     return state.services
       .flatMap(s => s.payments.map(p => ({ ...p, serviceId: s.id })))
@@ -148,7 +152,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider value={{
       ...state,
       addService, updateService, deleteService, markAsPaid,
-      addMember, removeMember, updateReminders, clearHistory, getAllPayments,
+      addMember, removeMember, updateReminders, clearHistory, clearAllServices, getAllPayments,
     }}>
       {children}
     </AppContext.Provider>

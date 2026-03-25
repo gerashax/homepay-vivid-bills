@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, Clock, Trash2, UserPlus, X } from 'lucide-react';
 
 export default function Settings() {
-  const { services, members, reminders, updateReminders, addMember, removeMember, clearHistory } = useApp();
+  const { services, members, reminders, updateReminders, addMember, removeMember, clearHistory, clearAllServices } = useApp();
   const [newMember, setNewMember] = useState('');
 
   const handleAddMember = () => {
