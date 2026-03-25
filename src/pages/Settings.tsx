@@ -1,19 +1,28 @@
 import { useState } from 'react';
-import { useApp, SERVICE_CONFIG, ServiceType } from '@/context/AppContext';
+import { useApp, SERVICE_CONFIG } from '@/context/AppContext';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Bell, Clock, Trash2, UserPlus, X } from 'lucide-react';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export default function Settings() {
   const { services, members, reminders, updateReminders, addMember, removeMember, clearHistory, clearAllServices } = useApp();
   const [newMember, setNewMember] = useState('');
+  const { requestPermission } = useNotifications();
+  const [permStatus, setPermStatus] = useState(Notification.permission);
 
   const handleAddMember = () => {
     if (newMember.trim()) {
       addMember(newMember.trim());
       setNewMember('');
     }
+  };
+
+  const handleEnableNotifications = async () => {
+    const granted = await requestPermission();
+    setPermStatus(granted ? 'granted' : 'denied');
+    if (granted) updateReminders({ enabled: true });
   };
 
   return (
@@ -35,6 +44,19 @@ export default function Settings() {
             onCheckedChange={v => updateReminders({ enabled: v })}
           />
         </div>
+
+        {/* NUEVO: botón de permiso */}
+        {permStatus !== 'granted' && (
+          <button
+            onClick={handleEnableNotifications}
+            className="mt-3 w-full py-2 rounded-xl bg-primary/15 text-primary text-sm font-medium border border-primary/30"
+          >
+            🔔 Activar permiso de notificaciones
+          </button>
+        )}
+        {permStatus === 'granted' && (
+          <p className="mt-2 text-xs text-green-500">✓ Notificaciones activadas</p>
+        )}
       </div>
 
       {/* Frequency & Hour */}
