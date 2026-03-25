@@ -22,12 +22,14 @@ export default function Dashboard() {
     paid: 'bg-status-paid',
     upcoming: 'bg-status-upcoming',
     overdue: 'bg-status-overdue',
+    pending: 'bg-muted-foreground',
   };
 
   const statusLabels = {
     paid: 'Pagado',
     upcoming: 'Por vencer',
     overdue: 'Vencido',
+    pending: 'Pendiente',
   };
 
   return (
