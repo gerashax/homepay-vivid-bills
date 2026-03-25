@@ -5,7 +5,7 @@ import { useApp, SERVICE_CONFIG, getServiceStatus, getDaysUntilDue } from '@/con
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { services } = useApp();
+  const { services, userName } = useApp();
 
   const totalSpent = services.reduce((sum, s) => {
     const thisMonth = s.payments.filter(p => {
@@ -22,19 +22,23 @@ export default function Dashboard() {
     paid: 'bg-status-paid',
     upcoming: 'bg-status-upcoming',
     overdue: 'bg-status-overdue',
+    pending: 'bg-muted-foreground',
   };
 
   const statusLabels = {
     paid: 'Pagado',
     upcoming: 'Por vencer',
     overdue: 'Vencido',
+    pending: 'Pendiente',
   };
 
   return (
     <div className="min-h-screen pb-24 px-4 pt-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-display font-bold text-foreground">HomePay</h1>
+        <h1 className="text-2xl font-display font-bold text-foreground">
+          Hola, {userName ?? 'Usuario'} 👋
+        </h1>
         <p className="text-muted-foreground text-sm mt-1">Gestor de pagos del hogar</p>
       </div>
 
@@ -82,7 +86,7 @@ export default function Dashboard() {
               <div className="flex-1 min-w-0">
                 <p className="font-display font-semibold text-foreground">{config.label}</p>
                 <p className="text-sm text-muted-foreground">
-                  {status === 'paid' ? 'Pagado ✓' : days >= 0 ? `Vence en ${days} días` : `Venció hace ${Math.abs(days)} días`}
+                  {status === 'paid' ? 'Pagado ✓' : status === 'pending' ? `Vence en ${days} días` : days >= 0 ? `Vence en ${days} días` : `Venció hace ${Math.abs(days)} días`}
                 </p>
               </div>
               <div className="text-right flex items-center gap-3">

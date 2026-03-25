@@ -33,9 +33,11 @@ export interface AppState {
   services: Service[];
   members: string[];
   reminders: ReminderConfig;
+  userName: string | null;
 }
 
 interface AppContextType extends AppState {
+  setUserName: (name: string) => void;
   addService: (service: Omit<Service, 'id' | 'payments' | 'paid'>) => void;
   updateService: (id: string, updates: Partial<Service>) => void;
   deleteService: (id: string) => void;
@@ -61,9 +63,10 @@ const defaultState: AppState = {
     hour: 9,
     serviceToggles: {},
   },
+  userName: null,
 };
 
-const STORAGE_VERSION = '2';
+const STORAGE_VERSION = '3';
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(() => {
@@ -149,6 +152,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(s => ({ ...s, services: [] }));
   };
 
+  const setUserName = (name: string) => {
+    setState(s => ({ ...s, userName: name }));
+  };
+
   const getAllPayments = (): Payment[] => {
     return state.services
       .flatMap(s => s.payments.map(p => ({ ...p, serviceId: s.id })))
@@ -158,7 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       ...state,
-      addService, updateService, deleteService, markAsPaid,
+      setUserName, addService, updateService, deleteService, markAsPaid,
       addMember, removeMember, updateReminders, clearHistory, clearAllServices, getAllPayments,
     }}>
       {children}
@@ -181,14 +188,14 @@ export const SERVICE_CONFIG: Record<ServiceType, { label: string; icon: string; 
   phone: { label: 'Teléfono', icon: '📱', colorClass: 'text-service-phone', hex: '#9C27B0' },
 };
 
-export function getServiceStatus(service: Service): 'paid' | 'upcoming' | 'overdue' {
+export function getServiceStatus(service: Service): 'paid' | 'upcoming' | 'overdue' | 'pending' {
   if (service.paid) return 'paid';
   const now = new Date();
   const due = new Date(service.dueDate);
   const diffDays = Math.ceil((due.getTime() - now.getTime()) / 86400000);
   if (diffDays < 0) return 'overdue';
   if (diffDays <= 5) return 'upcoming';
-  return 'paid'; // not yet near due, show as ok — actually let's show a neutral state
+  return 'pending';
 }
 
 export function getDaysUntilDue(dueDate: string): number {
