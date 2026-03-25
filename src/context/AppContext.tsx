@@ -63,6 +63,7 @@ const defaultState: AppState = {
     hour: 9,
     serviceToggles: {},
   },
+  userName: null,
 };
 
 const STORAGE_VERSION = '2';
