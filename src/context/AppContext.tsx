@@ -44,6 +44,7 @@ interface AppContextType extends AppState {
   removeMember: (name: string) => void;
   updateReminders: (config: Partial<ReminderConfig>) => void;
   clearHistory: () => void;
+  clearAllServices: () => void;
   getAllPayments: () => Payment[];
 }
 
@@ -62,12 +63,19 @@ const defaultState: AppState = {
   },
 };
 
+const STORAGE_VERSION = '2';
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try { return JSON.parse(stored); } catch { /* ignore */ }
+    const version = localStorage.getItem(STORAGE_KEY + '-version');
+    if (version === STORAGE_VERSION) {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try { return JSON.parse(stored); } catch { /* ignore */ }
+      }
     }
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.setItem(STORAGE_KEY + '-version', STORAGE_VERSION);
     return defaultState;
   });
 
@@ -137,6 +145,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const clearAllServices = () => {
+    setState(s => ({ ...s, services: [] }));
+  };
+
   const getAllPayments = (): Payment[] => {
     return state.services
       .flatMap(s => s.payments.map(p => ({ ...p, serviceId: s.id })))
@@ -147,7 +159,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider value={{
       ...state,
       addService, updateService, deleteService, markAsPaid,
-      addMember, removeMember, updateReminders, clearHistory, getAllPayments,
+      addMember, removeMember, updateReminders, clearHistory, clearAllServices, getAllPayments,
     }}>
       {children}
     </AppContext.Provider>

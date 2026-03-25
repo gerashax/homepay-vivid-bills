@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, Clock, Trash2, UserPlus, X } from 'lucide-react';
 
 export default function Settings() {
-  const { services, members, reminders, updateReminders, addMember, removeMember, clearHistory } = useApp();
+  const { services, members, reminders, updateReminders, addMember, removeMember, clearHistory, clearAllServices } = useApp();
   const [newMember, setNewMember] = useState('');
 
   const handleAddMember = () => {
@@ -144,13 +144,21 @@ export default function Settings() {
       </div>
 
       {/* Clear History */}
-      <div className="glass-card p-4">
+      <div className="glass-card p-4 space-y-4">
         <button
           onClick={clearHistory}
           className="flex items-center gap-3 text-destructive w-full"
         >
           <Trash2 size={18} />
           <span className="text-sm font-medium">Limpiar historial de pagos</span>
+        </button>
+        <div className="w-full h-px bg-border" />
+        <button
+          onClick={clearAllServices}
+          className="flex items-center gap-3 text-destructive w-full"
+        >
+          <Trash2 size={18} />
+          <span className="text-sm font-medium">Eliminar todos los servicios</span>
         </button>
       </div>
     </div>
