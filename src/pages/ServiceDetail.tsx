@@ -26,6 +26,7 @@ export default function ServiceDetail() {
     paid: { label: 'Pagado', color: 'text-status-paid', bg: 'bg-status-paid' },
     upcoming: { label: 'Próximo a vencer', color: 'text-status-upcoming', bg: 'bg-status-upcoming' },
     overdue: { label: 'Vencido', color: 'text-status-overdue', bg: 'bg-status-overdue' },
+    pending: { label: 'Pendiente', color: 'text-muted-foreground', bg: 'bg-muted-foreground' },
   };
 
   const lastPayments = service.payments.slice(0, 3);

@@ -86,7 +86,7 @@ export default function Dashboard() {
               <div className="flex-1 min-w-0">
                 <p className="font-display font-semibold text-foreground">{config.label}</p>
                 <p className="text-sm text-muted-foreground">
-                  {status === 'paid' ? 'Pagado ✓' : days >= 0 ? `Vence en ${days} días` : `Venció hace ${Math.abs(days)} días`}
+                  {status === 'paid' ? 'Pagado ✓' : status === 'pending' ? `Vence en ${days} días` : days >= 0 ? `Vence en ${days} días` : `Venció hace ${Math.abs(days)} días`}
                 </p>
               </div>
               <div className="text-right flex items-center gap-3">
