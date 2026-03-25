@@ -44,6 +44,7 @@ interface AppContextType extends AppState {
   removeMember: (name: string) => void;
   updateReminders: (config: Partial<ReminderConfig>) => void;
   clearHistory: () => void;
+  clearAllServices: () => void;
   getAllPayments: () => Payment[];
 }
 
