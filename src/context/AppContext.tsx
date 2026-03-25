@@ -62,83 +62,13 @@ const defaultState: AppState = {
   },
 };
 
-// Sample data for demo
-const sampleServices: Service[] = [
-  {
-    id: '1',
-    type: 'water',
-    amount: 450,
-    dueDate: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
-    responsible: 'shared',
-    members: ['Yo', 'Ana'],
-    notes: 'Servicio bimestral',
-    paid: false,
-    payments: [
-      { id: 'p1', serviceId: '1', amount: 420, date: '2026-02-15', paidBy: 'Yo' },
-      { id: 'p2', serviceId: '1', amount: 380, date: '2026-01-14', paidBy: 'Ana' },
-    ],
-  },
-  {
-    id: '2',
-    type: 'electricity',
-    amount: 890,
-    dueDate: new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0],
-    responsible: 'solo',
-    members: ['Yo'],
-    notes: '',
-    paid: false,
-    payments: [
-      { id: 'p3', serviceId: '2', amount: 750, date: '2026-02-20', paidBy: 'Yo' },
-    ],
-  },
-  {
-    id: '3',
-    type: 'internet',
-    amount: 599,
-    dueDate: new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0],
-    responsible: 'solo',
-    members: ['Yo'],
-    notes: 'Plan 100MB',
-    paid: true,
-    payments: [
-      { id: 'p4', serviceId: '3', amount: 599, date: '2026-03-10', paidBy: 'Yo' },
-      { id: 'p5', serviceId: '3', amount: 599, date: '2026-02-10', paidBy: 'Yo' },
-      { id: 'p6', serviceId: '3', amount: 549, date: '2026-01-10', paidBy: 'Yo' },
-    ],
-  },
-  {
-    id: '4',
-    type: 'gas',
-    amount: 320,
-    dueDate: new Date(Date.now() + 8 * 86400000).toISOString().split('T')[0],
-    responsible: 'shared',
-    members: ['Yo', 'Carlos'],
-    notes: '',
-    paid: false,
-    payments: [],
-  },
-  {
-    id: '5',
-    type: 'phone',
-    amount: 299,
-    dueDate: new Date(Date.now() + 1 * 86400000).toISOString().split('T')[0],
-    responsible: 'solo',
-    members: ['Yo'],
-    notes: 'Plan ilimitado',
-    paid: false,
-    payments: [
-      { id: 'p7', serviceId: '5', amount: 299, date: '2026-02-25', paidBy: 'Yo' },
-    ],
-  },
-];
-
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try { return JSON.parse(stored); } catch { /* ignore */ }
     }
-    return { ...defaultState, services: sampleServices, members: ['Yo', 'Ana', 'Carlos'] };
+    return defaultState;
   });
 
   useEffect(() => {
