@@ -3,19 +3,21 @@ import { useApp, getServiceStatus, SERVICE_CONFIG } from '@/context/AppContext';
 
 const LAST_NOTIF_KEY = 'homepay-last-notification';
 
+// iOS no soporta Notification API del navegador
+const isNotificationSupported = () => typeof window !== 'undefined' && 'Notification' in window;
+
 export function useNotifications() {
   const { reminders, services } = useApp();
 
-  // Pedir permiso
   const requestPermission = async (): Promise<boolean> => {
-    if (!('Notification' in window)) return false;
+    if (!isNotificationSupported()) return false;
     if (Notification.permission === 'granted') return true;
     const result = await Notification.requestPermission();
     return result === 'granted';
   };
 
-  // Disparar notificaciones de servicios pendientes
   const fireNotifications = () => {
+    if (!isNotificationSupported()) return;
     if (!reminders.enabled) return;
     if (Notification.permission !== 'granted') return;
 
@@ -41,7 +43,6 @@ export function useNotifications() {
     localStorage.setItem(LAST_NOTIF_KEY, new Date().toISOString());
   };
 
-  // Verificar si ya toca notificar según frecuencia
   const shouldNotify = (): boolean => {
     const last = localStorage.getItem(LAST_NOTIF_KEY);
     if (!last) return true;
@@ -53,22 +54,19 @@ export function useNotifications() {
     return false;
   };
 
-  // Programar para la hora correcta del día
   useEffect(() => {
     if (!reminders.enabled) return;
+    if (!isNotificationSupported()) return;
 
     const scheduleForToday = () => {
       const now = new Date();
       const target = new Date();
       target.setHours(reminders.hour, 0, 0, 0);
-
       let delay = target.getTime() - now.getTime();
-      if (delay < 0) delay += 86400000; // mañana si ya pasó la hora
-
+      if (delay < 0) delay += 86400000;
       const timer = setTimeout(() => {
         if (shouldNotify()) fireNotifications();
       }, delay);
-
       return timer;
     };
 

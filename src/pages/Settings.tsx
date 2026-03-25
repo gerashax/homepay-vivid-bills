@@ -10,7 +10,7 @@ export default function Settings() {
   const { services, members, reminders, updateReminders, addMember, removeMember, clearHistory, clearAllServices } = useApp();
   const [newMember, setNewMember] = useState('');
   const { requestPermission } = useNotifications();
-  const [permStatus, setPermStatus] = useState(Notification.permission);
+  const [permStatus, setPermStatus] = useState(typeof Notification !== 'undefined' ? Notification.permission : 'denied');
 
   const handleAddMember = () => {
     if (newMember.trim()) {
