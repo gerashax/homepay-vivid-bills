@@ -152,6 +152,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState(s => ({ ...s, services: [] }));
   };
 
+  const setUserName = (name: string) => {
+    setState(s => ({ ...s, userName: name }));
+  };
+
   const getAllPayments = (): Payment[] => {
     return state.services
       .flatMap(s => s.payments.map(p => ({ ...p, serviceId: s.id })))
@@ -161,7 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       ...state,
-      addService, updateService, deleteService, markAsPaid,
+      setUserName, addService, updateService, deleteService, markAsPaid,
       addMember, removeMember, updateReminders, clearHistory, clearAllServices, getAllPayments,
     }}>
       {children}
