@@ -66,7 +66,7 @@ const defaultState: AppState = {
   userName: null,
 };
 
-const STORAGE_VERSION = '2';
+const STORAGE_VERSION = '3';
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(() => {
