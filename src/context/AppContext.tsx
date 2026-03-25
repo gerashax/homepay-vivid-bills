@@ -37,6 +37,7 @@ export interface AppState {
 }
 
 interface AppContextType extends AppState {
+  setUserName: (name: string) => void;
   addService: (service: Omit<Service, 'id' | 'payments' | 'paid'>) => void;
   updateService: (id: string, updates: Partial<Service>) => void;
   deleteService: (id: string) => void;
